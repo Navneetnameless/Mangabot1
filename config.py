@@ -2,9 +2,9 @@ import os
 
 env_vars = {
   # Get From my.telegram.org
-  "API_HASH": "c3d56da0900e84f3e0d97f3698684ca4",
+  "API_HASH": "057fd0be9d7c38526b143c582bceb24b",
   # Get From my.telegram.org
-  "API_ID": "20453496",
+  "API_ID": "20445873",
   #Get For @BotFather
   "BOT_TOKEN": "7933592415:AAHfm7Om-nIZHhC-44XqdjHaS3Po2Wje-Gw",
   # Get For tembo.io
