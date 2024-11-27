@@ -19,7 +19,7 @@ env_vars = {
   "FNAME": "[MC] [{chap_num}] {chap_name} @Manga_Campus"
 }
 OWNER_ID = int(os.environ.get("OWNER_ID", "1788144071")) # Retrieve the AUTH_USERS environment variable as a space-separated string and convert to a list of integers 
-auth_users = [int(user_id) for user_id in os.environ.get('5164955785').split()] # Append OWNER_ID to the list of auth_users 
+auth_users = [int(user_id) for user_id in os.environ.get('5164955785,7716045686,6975428639,1302933634').split()] # Append OWNER_ID to the list of auth_users 
 AUTH_USERS = auth_users + [OWNER_ID]
 dbname = env_vars.get('DATABASE_URL_PRIMARY') or env_vars.get('DATABASE_URL') or 'sqlite:///test.db'
 
