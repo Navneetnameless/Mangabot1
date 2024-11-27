@@ -1,10 +1,12 @@
+
 from typing import List, AsyncIterable
 from urllib.parse import urlparse, urljoin, quote, quote_plus
 
 from bs4 import BeautifulSoup
 
 from plugins.client import MangaClient, MangaCard, MangaChapter, LastChapter
-
+import re
+import requests
 
 class AsuraScansClient(MangaClient):
 
@@ -28,8 +30,8 @@ class AsuraScansClient(MangaClient):
         cards = container.find_all("div", {"class": "flex h-[250px] md:h-[200px] overflow-hidden relative hover:opacity-60"})
 
         names = [containers.findChild('span', {'class': 'block text-[13.3px] font-bold'}).string.strip() for containers in container]
-        
-        url = [self.search_url + containers.get("href") for containers in container]
+        l = "https://asuracomic.net/"
+        url = [l + containers.get("href") for containers in container]
         images = [card.findNext("img").get("src") for card in cards]
 
         mangas = [MangaCard(self, *tup) for tup in zip(names, url, images)]
@@ -70,13 +72,15 @@ class AsuraScansClient(MangaClient):
 
         return urls
 
-    async def pictures_from_chapters(self, content: bytes, response=None):
-        bs = BeautifulSoup(content, "html.parser")
-
-        container = bs.find("div", {"class": "py-8 -mx-5 md:mx-0 flex flex-col items-center justify-center"})
-
-        images_url = [quote(containers.findNext("img").get("src"), safe=':/%') for containers in container]
-
+    async def pictures_from_chapters(self, data: bytes, response=None):
+        soup = BeautifulSoup(data, 'html.parser')
+        
+        script_tags = soup.find_all("script") 
+        scripts = [tag.text for tag in script_tags if "self.__next_f.push" in tag.text and "https://gg.asuracomic.net/storage/media" in tag.text and "url" in tag.text]
+        
+        pattern = r"https://gg\.asuracomic\.net/storage/media/\d+/conversions/[0-9A-Z]+(?:_result)?-optimized\.webp"
+       
+        images_url = re.findall(pattern, scripts[0])               
         return images_url
 
     async def search(self, query: str = "", page: int = 1) -> List[MangaCard]:
