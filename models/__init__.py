@@ -1,1 +1,1 @@
-from .db import DB, ChapterFile, Subscription, LastChapter, MangaName
+from .db import DB, ChapterFile, Subscription, LastChapter, MangaName, UserInfo
