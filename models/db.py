@@ -89,6 +89,16 @@ class DB(metaclass=LanguageSingleton):
                                                   (ChapterFile.telegraph_url == id))
             return (await session.exec(statement=statement)).first()
 
+    async def get_users(self, id: str):
+        async with AsyncSession(self.engine) as session:  # type: AsyncSession
+            statement = select(UserInfo).where((UserInfo.user_id == id) |
+                                               (UserInfo.thumb == id) |
+                                               (UserInfo.caption == id) | 
+                                               (UserInfo.fbanner == id) |
+                                               (UserInfo.lbanner == id))
+            return (await session.exec(statement=statement)).first()
+
+
     async def get_subs(self, user_id: str, filters=None) -> List[MangaName]:
         async with AsyncSession(self.engine) as session:
             statement = (
