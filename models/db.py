@@ -24,6 +24,8 @@ class UserInfo(SQLModel, table=True):
     user_id: str = Field(primary_key=True, regex=r'\d+')
     thumb: Optional[str]
     caption: Optional[str]
+    fbanner: Optional[str]
+    lbanner: Optional[str]
 
 class MangaOutput(SQLModel, table=True):
     user_id: str = Field(primary_key=True, regex=r'\d+')
