@@ -23,7 +23,7 @@ env_vars = {
   "TH2": "TH2.jpg",
   #Banner
   "B1": ["first.jpg", "last.jpg"],
-  "B2": ["", ""]
+  "B2": ["TH2.jpg", "thumb.jpg"]
 }
 OWNER_ID = int(os.environ.get("OWNER_ID", "1788144071")) # Retrieve the AUTH_USERS environment variable as a space-separated string and convert to a list of integers 
 auth_users = [int(user_id) for user_id in os.environ.get('5164955785,7716045686,6975428639,1302933634').split()] # Append OWNER_ID to the list of auth_users 
