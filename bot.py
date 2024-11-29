@@ -204,12 +204,12 @@ async def on_help(client: Client, message: Message):
         return await message.reply_text("You Can't Use Me Buddy' :(")
     await message.reply(f'Queue size: {pdf_queue.qsize()}')
 
-@Bot.on_message(filters.command('set') & filters.user(AUTH_USERS))
+@bot.on_message(filters.command('set') & filters.private & filters.user(AUTH_USERS))
 async def on_set_caption(client: Client, message: Message):
     try:
         db = DB()
         caption = message.text.split(" ", 1)[1]
-		cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
+	cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
         await db.add(user_options)
         #await db.set_caption(message.from_user.id, caption=caption)
 		await message.reply_text("**Your Caption successfully added ✅**")
