@@ -16,7 +16,14 @@ env_vars = {
   # {chap_num}: Chapter Number
   # {chap_name} : Manga Name
   # Ex : Chapter {chap_num} {chap_name} @Manhwa_Arena
-  "FNAME": "[MC] [{chap_num}] {chap_name} @Manga_Campus"
+  "F1": "[MC] [{chap_num}] {chap_name} @Manga_Campus",
+  "F2": "[{chap_num}] [MW] {chap_name} [@Manhwa_Weebs]",
+# Thumb 
+  "TH1": "",
+  "TH2": "",
+  #Banner
+  "B1": ["", ""],
+  "B2": ["", ""]
 }
 OWNER_ID = int(os.environ.get("OWNER_ID", "1788144071")) # Retrieve the AUTH_USERS environment variable as a space-separated string and convert to a list of integers 
 auth_users = [int(user_id) for user_id in os.environ.get('5164955785,7716045686,6975428639,1302933634').split()] # Append OWNER_ID to the list of auth_users 
