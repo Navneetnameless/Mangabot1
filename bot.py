@@ -21,7 +21,7 @@ from pyrogram import Client, filters
 from typing import Dict, Tuple, List, TypedDict
 from loguru import logger
 
-from models.db import DB, ChapterFile, Subscription, LastChapter, MangaName, MangaOutput
+from models.db import DB, ChapterFile, Subscription, LastChapter, MangaName, MangaOutput, UserInfo
 from pagination import Pagination
 from plugins.client import clean
 from tools.aqueue import AQueue
@@ -203,6 +203,24 @@ async def on_help(client: Client, message: Message):
     if message.from_user.id not in AUTH_USERS:
         return await message.reply_text("You Can't Use Me Buddy' :(")
     await message.reply(f'Queue size: {pdf_queue.qsize()}')
+
+@Bot.on_message(filters.command('set') & filters.user(AUTH_USERS))
+async def on_set_caption(client: Client, message: Message):
+    try:
+        db = DB()
+        caption = message.text.split(" ", 1)[1]
+		cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
+        await db.add(user_options)
+        #await db.set_caption(message.from_user.id, caption=caption)
+		await message.reply_text("**Your Caption successfully added ✅**")
+	except:
+		return await message.reply_text("""**Give me a caption to set.
+  <code>(episode)</code> : Episode Number 
+  <code>(quality)</code> : Quality i.e 720p, 1080p 
+  
+  Example:- 
+  </b> <code> /setcaption Naruto Shippuden S02 - (episode) - (quality) [Dual Audio] - @Wizard_Bots</code>**
+""")
 
 
 @bot.on_message(filters=filters.command(['refresh']))
