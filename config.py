@@ -19,8 +19,8 @@ env_vars = {
   "F1": "[MC] [{chap_num}] {chap_name} @Manga_Campus",
   "F2": "[{chap_num}] [MW] {chap_name} [@Manhwa_Weebs]",
 # Thumb 
-  "TH1": "",
-  "TH2": "",
+  "TH1": "TH1.jpg",
+  "TH2": "TH2.jpg",
   #Banner
   "B1": ["first.jpg", "last.jpg"],
   "B2": ["", ""]
