@@ -22,7 +22,7 @@ env_vars = {
   "TH1": "",
   "TH2": "",
   #Banner
-  "B1": ["", ""],
+  "B1": ["first.jpg", "last.jpg"],
   "B2": ["", ""]
 }
 OWNER_ID = int(os.environ.get("OWNER_ID", "1788144071")) # Retrieve the AUTH_USERS environment variable as a space-separated string and convert to a list of integers 
