@@ -92,10 +92,10 @@ class DB(metaclass=LanguageSingleton):
     async def get_users(self, id: str):
         async with AsyncSession(self.engine) as session:  # type: AsyncSession
             statement = select(UserInfo).where((UserInfo.user_id == id) |
-                                               (UserInfo.thumb == id) |
-                                               (UserInfo.caption == id) | 
-                                               (UserInfo.fbanner == id) |
-                                               (UserInfo.lbanner == id))
+                                               (UserInfo.thumb == thumb) |
+                                               (UserInfo.caption == caption) | 
+                                               (UserInfo.banner == banner))
+                                             #  (UserInfo.lbanner == id))
             return (await session.exec(statement=statement)).first()
 
 
