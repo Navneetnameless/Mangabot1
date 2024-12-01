@@ -29,7 +29,7 @@ from tools.flood import retry_on_flood
 
 
 OWNER_ID = 1788144071 # put owner id in number directly 
-auth_users = [5164955785,7716045686,6975428639,1302933634] # eg: [83528911,836289,9362891]
+auth_users = [1880221341, 5164955785, 7716045686, 6975428639,1302933634] # eg: [83528911,836289,9362891]
 AUTH_USERS = auth_users + [OWNER_ID]
 
 
