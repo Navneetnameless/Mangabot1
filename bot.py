@@ -233,6 +233,13 @@ To Change Your Settings 👇👇</i></b>"""
 	#cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
         #await db.add(user_options)
 
+@bot.on_message(filters=filters.command(['pto']))
+async def on_photo(client: Client, message: Message):
+	try: photo = message.text.split(" ")
+	except Exception as e: return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
+	if not photo.endswith(".jpg"): photo = photo + ".jpg"
+	return await client.send_photo(photo=photo, caption=f"<b>{photo}</b>")
+
 @bot.on_message(filters=filters.command(['refresh']))
 async def on_refresh(client: Client, message: Message):
     if message.from_user.id not in AUTH_USERS:
@@ -613,29 +620,29 @@ def is_pagination_data(callback: CallbackQuery):
 
 @bot.on_callback_query()
 async def on_callback_query(client, callback: CallbackQuery):
-    if callback.data in queries:
-        await plugin_click(client, callback)
-    elif callback.data in mangas:
-        await manga_click(client, callback)
-    elif callback.data in chapters:
-        await chapter_click(client, callback.data, callback.from_user.id)
-    elif callback.data in full_pages:
-        await full_page_click(client, callback)
-    elif callback.data in favourites:
-        await favourite_click(client, callback)
-    elif is_pagination_data(callback):
-        await pagination_click(client, callback)
-    elif callback.data in language_query:
-        await language_click(client, callback)
-    elif callback.data.startswith('options'):
-        await options_click(client, callback)
-    else:
-        await bot.answer_callback_query(callback.id, 'This is an old button, please redo the search', show_alert=True)
-        return
-    try:
-        await callback.answer()
-    except BaseException as e:
-        logger.warning(e)
+	if callback.data in queries:
+		await plugin_click(client, callback)
+	elif callback.data in mangas:
+		await manga_click(client, callback)
+	elif callback.data in chapters:
+		await chapter_click(client, callback.data, callback.from_user.id)
+	elif callback.data in full_pages:
+		await full_page_click(client, callback)
+	elif callback.data in favourites:
+		await favourite_click(client, callback)
+	elif is_pagination_data(callback):
+		await pagination_click(client, callback)
+	elif callback.data in language_query:
+		await language_click(client, callback)
+	elif callback.data.startswith('options'):
+		await options_click(client, callback)
+	elif callback.data == "athumb":
+		pass
+	else:
+		await bot.answer_callback_query(callback.id, 'This is an old button, please redo the search', show_alert=True)
+		return
+	try: await callback.answer()
+	except BaseException as e: logger.warning(e)
 
 
 async def remove_subscriptions(sub: str):
