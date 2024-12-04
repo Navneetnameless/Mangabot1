@@ -243,7 +243,7 @@ async def on_set_caption(client: Client, message: Message):
  Banner: <code>None</code>
  last: <code>None</code>
  To Change Your Settings 👇👇</i></b>"""
-	return message.reply(text, reply_markup=sb)
+	return await message.reply(text, reply_markup=sb)
 	#cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
         #await db.add(user_options)
 
