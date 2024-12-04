@@ -211,7 +211,8 @@ async def on_help(client: Client, message: Message):
 async def on_set_caption(client: Client, message: Message):
 	db = DB()
 	user_info = db.get_user(str(message.from_user.id))
-	text = f"""
+	try:
+		text = f"""
  <b><i>For Manga Camps:
  Thumb : <code>{env_vars["TH1"]}</code>
  Banner: <code>{env_vars["B1"]}</code>
@@ -221,10 +222,26 @@ async def on_set_caption(client: Client, message: Message):
  To Views Photo: <code>/pto photoname.jpg</code>
  
  Your Currnet Settings:
- Caption: <code>{user_info.cap if user_info.cap else "None"}</code>
- Thumb: <code>{user_info.thumb if user_info.thumb else "None"}</code>
- Banner: <code>{user_info.b1 if user_info.b1 else " None"}</code>
- last: <code>{user_info.b2 if user_info.b2 else " None"}</code>
+ Caption: <code>{user_info.cap}</code>
+ Thumb: <code>{user_info.thumb}</code>
+ Banner: <code>{user_info.b1}</code>
+ last: <code>{user_info.b2}</code>
+ To Change Your Settings 👇👇</i></b>"""
+	except:
+		text = f"""
+ <b><i>For Manga Camps:
+ Thumb : <code>{env_vars["TH1"]}</code>
+ Banner: <code>{env_vars["B1"]}</code>
+ For Weebs:
+ Thumb: <code>{env_vars["TH2"]}</code>
+ Bannar: <code>{env_vars["B2"]}</code>
+ To Views Photo: <code>/pto photoname.jpg</code>
+ 
+ Your Currnet Settings:
+ Caption: <code>None</code>
+ Thumb: <code>None</code>
+ Banner: <code>None</code>
+ last: <code>None</code>
  To Change Your Settings 👇👇</i></b>"""
 	return message.reply(text, reply_markup=sb)
 	#cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
