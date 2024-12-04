@@ -222,12 +222,13 @@ async def on_set_caption(client: Client, message: Message):
  To Views Photo: <code>/pto photoname.jpg</code>
  
  Your Currnet Settings:
- Caption: <code>{user_info.cap}</code>
- Thumb: <code>{user_info.thumb}</code>
- Banner: <code>{user_info.b1}</code>
- last: <code>{user_info.b2}</code>
+ Caption: <code>{await user_info.cap}</code>
+ Thumb: <code>{await user_info.thumb}</code>
+ Banner: <code>{await user_info.b1}</code>
+ last: <code>{await user_info.b2}</code>
  To Change Your Settings 👇👇</i></b>"""
-	except:
+	except Exception as e:
+		print(f"on : {e}")
 		text = f"""
  <b><i>For Manga Camps:
  Thumb : <code>{env_vars["TH1"]}</code>
@@ -249,7 +250,7 @@ async def on_set_caption(client: Client, message: Message):
 
 @bot.on_message(filters.command(['pto', 'photo']) & filters.private & filters.user(AUTH_USERS))
 async def on_photo(client: Client, message: Message):
-	try: photo = message.text.split(" ")
+	try: photo = message.text.split(" ")[1]
 	except Exception as e: return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
 	if not photo.endswith(".jpg"): 
 		photo = photo + ".jpg"
@@ -491,7 +492,15 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 	download = download and options & ((1 << len(OutputOptions)) - 1) != 0
 	
 	if download:
-		pictures_folder = await chapter.client.download_pictures(chapter)
+		pictures_folder = []
+		if user_info.b1:
+			b1 = await user_info.b1
+			pictures_folder.append(b1)
+		pis = await chapter.client.download_pictures(chapter)
+		pictures_folder.append(pis)
+		if user_info.b2:
+			b2 = await user_info.b2
+			pictures_folder.append(b2)
 	if not chapter.pictures:
 		return await client.send_message(chat_id,
 						 f'There was an error parsing this chapter or chapter is missing' +
@@ -523,10 +532,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 			media_docs.append(InputMediaDocument(chapter_file.file_id))
 		else:
 			try:
-				if user_info.b1:
-					pictures_folder.insert(0, user_info.b1)
-					pictures_folder.append(user_info.b2)
-					pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
+				pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
 			except Exception as e:
 				logger.exception(f'Error creating pdf for {chapter.name} - {chapter.manga.name}\n{e}')
 				return await client.send_message(chat_id, f'There was an error making the pdf for this chapter. '
