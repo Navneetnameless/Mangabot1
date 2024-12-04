@@ -678,8 +678,8 @@ async def on_callback_query(client, callback: CallbackQuery):
 				cap = env_vars["F2"]
 				b1 = env_vars["B2"][0]
 				b2 = env_vars["B2"][1]
-			user_options = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
-			await DB().add(user_options)
+			#user_options = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
+			await DB().add_users(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
 			return await callback.message.edit_text(text=f"Doned.")
 		except Exception as e:
 			return await callback.message.edit_text(text=f"Errors: <code>{e}</code>")
