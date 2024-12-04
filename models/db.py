@@ -1,6 +1,7 @@
 import os
 from typing import Type, List, TypeVar, Optional
 
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel, Field, Session, select, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
