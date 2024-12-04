@@ -509,7 +509,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 		else:
 			try:
 				if user_info.b1:
-					pictures_folder.pop(0, user_info.b1)
+					pictures_folder.insert(0, user_info.b1)
 					pictures_folder.append(user_info.b2)
 					pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
 			except Exception as e:
