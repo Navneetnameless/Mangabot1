@@ -207,7 +207,7 @@ async def on_help(client: Client, message: Message):
         return await message.reply_text("You Can't Use Me Buddy' :(")
     await message.reply(f'Queue size: {pdf_queue.qsize()}')
 
-@bot.on_message(filters.command('set') & filters.private & filters.user(AUTH_USERS))
+@bot.on_message(filters.command('on') & filters.private & filters.user(AUTH_USERS))
 async def on_set_caption(client: Client, message: Message):
 	db = DB()
 	user_info = db.get_user(str(message.from_user.id))
