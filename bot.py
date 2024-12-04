@@ -247,13 +247,13 @@ async def on_set_caption(client: Client, message: Message):
 	#cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
         #await db.add(user_options)
 
-@bot.on_message(filters=filters.command(['pto']))
+@bot.on_message(filters.command(['pto', 'photo']) & filters.private & filters.user(AUTH_USERS))
 async def on_photo(client: Client, message: Message):
 	try: photo = message.text.split(" ")
 	except Exception as e: return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
 	if not photo.endswith(".jpg"): 
 		photo = photo + ".jpg"
-	return await client.send_photo(photo=photo, caption=f"<b>{photo}</b>")
+	return await client.send_photo(chat_id=message.from_user.id, photo=photo, caption=f"<b>{photo}</b>")
 
 @bot.on_message(filters=filters.command(['refresh']))
 async def on_refresh(client: Client, message: Message):
