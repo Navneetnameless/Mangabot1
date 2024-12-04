@@ -221,9 +221,10 @@ async def on_set_caption(client: Client, message: Message):
  To Views Photo: <code>/pto photoname.jpg</code>
  
  Your Currnet Settings:
- Caption: <code>{user_info.caption if user_info.caption else "None"}</code>
+ Caption: <code>{user_info.cap if user_info.cap else "None"}</code>
  Thumb: <code>{user_info.thumb if user_info.thumb else "None"}</code>
- Banner: <code>{user_info.banner if user_info.banner else " None"}</code>
+ Banner: <code>{user_info.b1 if user_info.b1 else " None"}</code>
+ last: <code>{user_info.b2 if user_info.b2 else " None"}</code>
  To Change Your Settings 👇👇</i></b>"""
 	return message.reply(text, reply_markup=sb)
 	#cap = UserInfo(user_id=str(message.from_user.id), caption=caption)
