@@ -32,8 +32,8 @@ OWNER_ID = 1788144071 # put owner id in number directly
 auth_users = [1880221341, 5164955785, 7716045686, 6975428639,1302933634] # eg: [83528911,836289,9362891]
 AUTH_USERS = auth_users + [OWNER_ID]
 sb = [
-	[InlineKeyboardButton('* Thumb *', callback_data = "athumb"), InlineKeyboardButton('* Caption *', callback_data = "acap")],
-        [InlineKeyboardButton("* Banner *", callback_data = "aban")],
+	[InlineKeyboardButton('* Manga Campus *', callback_data = "athumb:MC")],
+        [InlineKeyboardButton("* Manga Weebs *", callback_data = "athumb:MW")],
 ]
 
 
@@ -211,7 +211,7 @@ async def on_help(client: Client, message: Message):
 async def on_set_caption(client: Client, message: Message):
 	db = DB()
 	user_info = db.get_user(str(message.from_user.id))
-        text = f"""<b><i>
+ text = f"""<b><i>
 For Manga Camps:
 Thumb : <code>{env_vars["TH1"]}</code>
 Banner: <code>{env_vars["B1"]}</code>
