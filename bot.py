@@ -502,7 +502,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 	media_docs = []
 	if options & OutputOptions.PDF:
 		if chapter_file.file_id:
-			media_docs.append(InputMediaDocument(chapter_file.file_id)
+			media_docs.append(InputMediaDocument(chapter_file.file_id))
 		else:
 			try:
 				if user_info.b1:
