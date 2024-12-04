@@ -210,7 +210,7 @@ async def on_help(client: Client, message: Message):
 @bot.on_message(filters.command('on') & filters.private & filters.user(AUTH_USERS))
 async def on_set_caption(client: Client, message: Message):
 	db = DB()
-	user_info = db.get_user(str(message.from_user.id))
+	user_info = await db.get_user(str(message.from_user.id))
 	try:
 		text = f"""
  <b><i>For Manga Camps:
@@ -673,9 +673,9 @@ async def on_callback_query(client, callback: CallbackQuery):
 				b2 = env_vars["B2"][1]
 			user_options = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
 			await DB().add(user_options)
-			return await callback.message.edit_text(text="Doned Thumb: {thumb}")
+			return await callback.message.edit_text(text=f"Doned.")
 		except Exception as e:
-			return await callback.message.edit_text(text="Errors: <code>{e}</code>")
+			return await callback.message.edit_text(text=f"Errors: <code>{e}</code>")
 		
 	else:
 		await bot.answer_callback_query(callback.id, 'This is an old button, please redo the search', show_alert=True)
