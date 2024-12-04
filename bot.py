@@ -212,6 +212,10 @@ async def on_set_caption(client: Client, message: Message):
 	db = DB()
 	user_info = await db.get_user(str(message.from_user.id))
 	try:
+		cap = await user_info.cap
+		thumb = await user_info.thumb
+		b1 = await user_info.b1
+		b2 = await user_info.b2
 		text = f"""
  <b><i>For Manga Camps:
  Thumb : <code>{env_vars["TH1"]}</code>
@@ -219,13 +223,14 @@ async def on_set_caption(client: Client, message: Message):
  For Weebs:
  Thumb: <code>{env_vars["TH2"]}</code>
  Bannar: <code>{env_vars["B2"]}</code>
+ 
  To Views Photo: <code>/pto photoname.jpg</code>
  
  Your Currnet Settings:
- Caption: <code>{await user_info.cap}</code>
- Thumb: <code>{await user_info.thumb}</code>
- Banner: <code>{await user_info.b1}</code>
- last: <code>{await user_info.b2}</code>
+ Caption: <code>{cap}</code>
+ Thumb: <code>{thumb}</code>
+ Banner: <code>{b1}</code>
+ last: <code>{b2}</code>
  To Change Your Settings 👇👇</i></b>"""
 	except Exception as e:
 		print(f"on : {e}")
@@ -250,11 +255,13 @@ async def on_set_caption(client: Client, message: Message):
 
 @bot.on_message(filters.command(['pto', 'photo']) & filters.private & filters.user(AUTH_USERS))
 async def on_photo(client: Client, message: Message):
-	try: photo = message.text.split(" ")[1]
-	except Exception as e: return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
-	if not photo.endswith(".jpg"): 
-		photo = photo + ".jpg"
-	return await client.send_photo(chat_id=message.from_user.id, photo=photo, caption=f"<b>{photo}</b>")
+	try: 
+		photo = message.text.split(" ")[1]
+		if not photo.endswith(".jpg"):
+			photo = photo + ".jpg"
+		return await client.send_photo(chat_id=message.from_user.id, photo=photo, caption=f"<b>{photo}</b>")
+	except Exception as e:
+		return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
 
 @bot.on_message(filters=filters.command(['refresh']))
 async def on_refresh(client: Client, message: Message):
