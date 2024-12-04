@@ -636,8 +636,23 @@ async def on_callback_query(client, callback: CallbackQuery):
 		await language_click(client, callback)
 	elif callback.data.startswith('options'):
 		await options_click(client, callback)
-	elif callback.data == "athumb":
-		pass
+	elif callback.data.startswith("athumb"):
+		if callback.data == "athumb":
+			return await callback.message.edit_text(
+				text = f"Options:\n1) {env_vars["TH1"]} (Manga Campus)\n2) {env_vars["TH2"]} (Weebs Gc)",
+				disable_web_page_preview = True,
+				reply_markup = InlineKeyboardMarkup(
+					[
+						[InlineKeyboardButton("1", callback_data = "athumb:TH1"), InlineKeyboardButton("2", callback_data = "athumb:TH2")],
+						[InlineKeyboardButton("* Back *", callback_data = "s_back")],
+					]
+				))
+		thumb = callback.data.split(":")[1]
+		thumb = thumb + ".jpg"
+		cap = UserInfo(user_id=str(callback.from_user.id), thumb=thumb)
+		await DB().add(user_options)
+		return await callback.message.edit_text(text="Doned Thumb: {thumb}")
+		
 	else:
 		await bot.answer_callback_query(callback.id, 'This is an old button, please redo the search', show_alert=True)
 		return
