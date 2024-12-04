@@ -211,7 +211,7 @@ async def on_help(client: Client, message: Message):
 async def on_set_caption(client: Client, message: Message):
 	db = DB()
 	user_info = db.get_user(str(message.from_user.id))
- text = f"""<b><i>
+	text = f"""<b><i>
 For Manga Camps:
 Thumb : <code>{env_vars["TH1"]}</code>
 Banner: <code>{env_vars["B1"]}</code>
@@ -458,104 +458,105 @@ async def chapter_click(client, data, chat_id):
 
 
 async def send_manga_chapter(client: Client, chapter, chat_id):
-    db = DB()
+	db = DB()
 
-    chapter_file = await db.get(ChapterFile, chapter.url)
-    options = await db.get(MangaOutput, str(chat_id))
-    options = options.output if options else (1 << 30) - 1
-
-    error_caption = '\n'.join([
-        f'{chapter.manga.name} - {chapter.name}',
-        f'{chapter.get_url()}'
-    ])
-
-    download = not chapter_file
-    download = download or options & OutputOptions.PDF and not chapter_file.file_id
-    download = download or options & OutputOptions.CBZ and not chapter_file.cbz_id
-    download = download and options & ((1 << len(OutputOptions)) - 1) != 0
-
-    if download:
-        pictures_folder = await chapter.client.download_pictures(chapter)
-        if not chapter.pictures:
-            return await client.send_message(chat_id,
-                                          f'There was an error parsing this chapter or chapter is missing' +
-                                          f', please check the chapter at the web\n\n{error_caption}')
-        thumb_path = "thumb.jpg"
-
-    chapter_file = chapter_file or ChapterFile(url=chapter.url)
-
-    if env_vars["FNAME"]:
-        try:
-            try: chap_num = re.search(r"Vol (\d+(?:\.\d+)?) Chapter (\d+(?:\.\d+)?)", chapter.name).group(2)
-            except: chap_num = re.search(r"(\d+(?:\.\d+)?)", chapter.name).group(1)
-            chap_name = clean(chapter.manga.name, 29)
-            ch_name = env_vars["FNAME"]
-        
-            ch_name = ch_name.replace("{chap_num}", str(chap_num))
-            ch_name = ch_name.replace("{chap_name}", str(chap_name))
-        except Exception as e:
-            print(e)
-    else:
-        ch_name = clean(f'{chapter.name} - {clean(chapter.manga.name, 25)}', 45)
-        
-    success_caption = f'<blockquote><b>{ch_name}</b></blockquote>'
-    success_caption = re.sub(r'(\d+)', lambda x: f"{int(x.group()):03}", success_caption, count=1)
-    ch_name = re.sub(r'(\d+)', lambda x: f"{int(x.group()):03}", ch_name, count=1)
-    media_docs = []
-
-    if options & OutputOptions.PDF:
-        if chapter_file.file_id:
-            media_docs.append(InputMediaDocument(chapter_file.file_id))
-        else:
-            try:
-                pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
-            except Exception as e:
-                logger.exception(f'Error creating pdf for {chapter.name} - {chapter.manga.name}\n{e}')
-                return await client.send_message(chat_id, f'There was an error making the pdf for this chapter. '
+	user_info = await db.get(UserInfo, str(chat_id))
+	chapter_file = await db.get(ChapterFile, chapter.url)
+	options = await db.get(MangaOutput, str(chat_id))
+	options = options.output if options else (1 << 30) - 1
+	
+	error_caption = '\n'.join([
+		f'{chapter.manga.name} - {chapter.name}',
+		f'{chapter.get_url()}'
+	])
+	
+	download = not chapter_file
+	download = download or options & OutputOptions.PDF and not chapter_file.file_id
+	download = download or options & OutputOptions.CBZ and not chapter_file.cbz_id
+	download = download and options & ((1 << len(OutputOptions)) - 1) != 0
+	
+	if download:
+		pictures_folder = await chapter.client.download_pictures(chapter)
+	if not chapter.pictures:
+		return await client.send_message(chat_id,
+						 f'There was an error parsing this chapter or chapter is missing' +
+						 f', please check the chapter at the web\n\n{error_caption}')
+	if user_info.thumb:
+		thumb_path = f"{user_info.thumb}"
+	elif not user_info.thumb:
+		thumb_path = "thumb.jpg"
+	chapter_file = chapter_file or ChapterFile(url=chapter.url)
+	if user_info.cap:
+		try:
+			try: chap_num = re.search(r"Vol (\d+(?:\.\d+)?) Chapter (\d+(?:\.\d+)?)", chapter.name).group(2)
+			except: chap_num = re.search(r"(\d+(?:\.\d+)?)", chapter.name).group(1)
+			chap_name = clean(chapter.manga.name, 29)
+			ch_name = user_info.cap
+			ch_name = ch_name.replace("{chap_num}", str(chap_num))
+			ch_name = ch_name.replace("{chap_name}", str(chap_name))
+		except Exception as e:
+			print(e)
+	else:
+		ch_name = clean(f'{chapter.name} - {clean(chapter.manga.name, 25)}', 45)
+	
+	success_caption = f'<blockquote><b>{ch_name}</b></blockquote>'
+	success_caption = re.sub(r'(\d+)', lambda x: f"{int(x.group()):03}", success_caption, count=1)
+	ch_name = re.sub(r'(\d+)', lambda x: f"{int(x.group()):03}", ch_name, count=1)
+	media_docs = []
+	if options & OutputOptions.PDF:
+		if chapter_file.file_id:
+			media_docs.append(InputMediaDocument(chapter_file.file_id))
+	else:
+		try:
+			if user_info.b1:
+				pictures_folder.pop(0, user_info.b1)
+				pictures_folder.append(user_info.b2)
+			pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
+		except Exception as e:
+			logger.exception(f'Error creating pdf for {chapter.name} - {chapter.manga.name}\n{e}')
+			return await client.send_message(chat_id, f'There was an error making the pdf for this chapter. '
                                                        f'Forward this message to the bot group to report the '
                                                        f'error.\n\n{error_caption}')
-            media_docs.append(InputMediaDocument(pdf, thumb=thumb_path))
+		media_docs.append(InputMediaDocument(pdf, thumb=thumb_path))
+	if options & OutputOptions.CBZ:
+		if chapter_file.cbz_id:
+			media_docs.append(InputMediaDocument(chapter_file.cbz_id))
+		else:
+			try:
+				cbz = await asyncio.get_running_loop().run_in_executor(None, fld2cbz, pictures_folder, ch_name)
+			except Exception as e:
+				logger.exception(f'Error creating cbz for {chapter.name} - {chapter.manga.name}\n{e}')
+				return await client.send_message(chat_id, f'There was an error making the cbz for this chapter. '
+								 f'Forward this message to the bot group to report the '
+								 f'error.\n\n{error_caption}')
+			media_docs.append(InputMediaDocument(cbz, thumb=thumb_path))
+	if len(media_docs) == 0:
+		messages: list[Message] = await retry_on_flood(client.send_message)(chat_id, success_caption)
+	else:
+		media_docs[-1].caption = success_caption
+		messages: list[Message] = await retry_on_flood(client.send_media_group)(chat_id, media_docs)
+	channel = env_vars.get('CACHE_CHANNEL')
+	for msg in messages:
+		if msg:
+			await msg.copy(channel)
+			await asyncio.sleep(1)
+	return
 
-    if options & OutputOptions.CBZ:
-        if chapter_file.cbz_id:
-            media_docs.append(InputMediaDocument(chapter_file.cbz_id))
-        else:
-            try:
-                cbz = await asyncio.get_running_loop().run_in_executor(None, fld2cbz, pictures_folder, ch_name)
-            except Exception as e:
-                logger.exception(f'Error creating cbz for {chapter.name} - {chapter.manga.name}\n{e}')
-                return await client.send_message(chat_id, f'There was an error making the cbz for this chapter. '
-                                                       f'Forward this message to the bot group to report the '
-                                                       f'error.\n\n{error_caption}')
-            media_docs.append(InputMediaDocument(cbz, thumb=thumb_path))
-
-    if len(media_docs) == 0:
-        messages: list[Message] = await retry_on_flood(client.send_message)(chat_id, success_caption)
-    else:
-        media_docs[-1].caption = success_caption
-        messages: list[Message] = await retry_on_flood(client.send_media_group)(chat_id, media_docs)
-
-    channel = env_vars.get('CACHE_CHANNEL')
-
-    for msg in messages:
-        if msg:
-            await msg.copy(channel)
-            await asyncio.sleep(1)
-            
-    # Save file ids
-    if download and media_docs:
-        for message in [x for x in messages if x.document]:
-            if message.document.file_name.endswith('.pdf'):
-                chapter_file.file_id = message.document.file_id
-                chapter_file.file_unique_id = message.document.file_unique_id
-            elif message.document.file_name.endswith('.cbz'):
-                chapter_file.cbz_id = message.document.file_id
+# To Not Mix Other Thumb Wuth Other
+"""	if download and media_docs:
+		for message in [x for x in messages if x.document]:
+			if message.document.file_name.endswith('.pdf'):
+				chapter_file.file_id = message.document.file_id
+				chapter_file.file_unique_id = message.document.file_unique_id
+			elif message.document.file_name.endswith('.cbz'):
+				chapter_file.cbz_id = message.document.file_id
                 chapter_file.cbz_unique_id = message.document.file_unique_id
 
     if download:
         shutil.rmtree(pictures_folder, ignore_errors=True)
         await db.add(chapter_file)
 
+"""
 
 async def pagination_click(client: Client, callback: CallbackQuery):
     pagination_id, page = map(int, callback.data.split('_'))
@@ -785,18 +786,20 @@ async def manga_updater():
 
 
 async def chapter_creation(worker_id: int = 0):
-    """
+	"""
     This function will always run in the background
     It will be listening for a channel which notifies whether there is a new request in the request queue
     :return:
     """
-    logger.debug(f"Worker {worker_id}: Starting worker")
-    while True:
-        chapter, chat_id = await pdf_queue.get(worker_id)
-        logger.debug(f"Worker {worker_id}: Got chapter '{chapter.name}' from queue for user '{chat_id}'")
-        try:
-            await send_manga_chapter(bot, chapter, chat_id)
-        except:
-            logger.exception(f"Error sending chapter {chapter.name} to user {chat_id}")
-        finally:
-            pdf_queue.release(chat_id)
+	logger.debug(f"Worker {worker_id}: Starting worker")
+	while True:
+		channel = env_vars.get('CACHE_CHANNEL')
+		chapter, chat_id = await pdf_queue.get(worker_id)
+		logger.debug(f"Worker {worker_id}: Got chapter '{chapter.name}' from queue for user '{chat_id}'")
+		try: 
+			msg = await send_manga_chapter(bot, chapter, chat_id)
+			await msg.copy(channel)
+		except:
+			logger.exception(f"Error sending chapter {chapter.name} to user {chat_id}")
+		finally:
+			pdf_queue.release(chat_id)
