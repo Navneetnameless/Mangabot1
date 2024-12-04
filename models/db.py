@@ -95,7 +95,25 @@ class DB(metaclass=LanguageSingleton):
             statement = select(UserInfo).where(UserInfo.user_id == user_id)
             result = await session.execute(statement)
             return result.scalars().first()
-
+    
+    async def add_users(self, user_id: str, thumb: str, cap: str, b1: str, b2: str):
+    # Check if the user already exists
+        async with AsyncSession(self.engine) as session:
+            result = await session.execute(select(UserInfo).where(UserInfo.user_id == user_id))
+            existing_user = result.scalar_one_or_none()
+            
+            if existing_user:
+                await session.execute(
+                    update(UserInfo)
+                    .where(UserInfo.user_id == user_id)
+                    .values(thumb=thumb, cap=cap, b1=b1, b2=b2)
+                )
+            else:
+                new_user = UserInfo(user_id=user_id, thumb=thumb, cap=cap, b1=b1, b2=b2)
+                session.add(new_user)
+            await session.commit()
+            return
+    
     async def get_subs(self, user_id: str, filters=None) -> List[MangaName]:
         async with AsyncSession(self.engine) as session:
             statement = (
