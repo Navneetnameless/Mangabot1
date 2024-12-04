@@ -505,18 +505,18 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 	media_docs = []
 	if options & OutputOptions.PDF:
 		if chapter_file.file_id:
-			media_docs.append(InputMediaDocument(chapter_file.file_id))
-	else:
-		try:
-			if user_info.b1:
-				pictures_folder.pop(0, user_info.b1)
-				pictures_folder.append(user_info.b2)
-			pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
-		except Exception as e:
-			logger.exception(f'Error creating pdf for {chapter.name} - {chapter.manga.name}\n{e}')
-			return await client.send_message(chat_id, f'There was an error making the pdf for this chapter. '
-                                                       f'Forward this message to the bot group to report the '
-                                                       f'error.\n\n{error_caption}')
+			media_docs.append(InputMediaDocument(chapter_file.file_id)
+		else:
+			try:
+				if user_info.b1:
+					pictures_folder.pop(0, user_info.b1)
+					pictures_folder.append(user_info.b2)
+					pdf = await asyncio.get_running_loop().run_in_executor(None, fld2pdf, pictures_folder, ch_name)
+			except Exception as e:
+				logger.exception(f'Error creating pdf for {chapter.name} - {chapter.manga.name}\n{e}')
+				return await client.send_message(chat_id, f'There was an error making the pdf for this chapter. '
+								 f'Forward this message to the bot group to report the '
+								 f'error.\n\n{error_caption}')
 		media_docs.append(InputMediaDocument(pdf, thumb=thumb_path))
 	if options & OutputOptions.CBZ:
 		if chapter_file.cbz_id:
@@ -542,7 +542,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 			await asyncio.sleep(1)
 	return
 
-# To Not Mix Other Thumb Wuth Other
+# To Not Mix Other Thumb With Other
 """	if download and media_docs:
 		for message in [x for x in messages if x.document]:
 			if message.document.file_name.endswith('.pdf'):
