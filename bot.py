@@ -637,19 +637,18 @@ async def on_callback_query(client, callback: CallbackQuery):
 	elif callback.data.startswith('options'):
 		await options_click(client, callback)
 	elif callback.data.startswith("athumb"):
-		if callback.data == "athumb":
-			return await callback.message.edit_text(
-				text = f"Options:\n1) {env_vars["TH1"]} (Manga Campus)\n2) {env_vars["TH2"]} (Weebs Gc)",
-				disable_web_page_preview = True,
-				reply_markup = InlineKeyboardMarkup(
-					[
-						[InlineKeyboardButton("1", callback_data = "athumb:TH1"), InlineKeyboardButton("2", callback_data = "athumb:TH2")],
-						[InlineKeyboardButton("* Back *", callback_data = "s_back")],
-					]
-				))
-		thumb = callback.data.split(":")[1]
-		thumb = thumb + ".jpg"
-		cap = UserInfo(user_id=str(callback.from_user.id), thumb=thumb)
+		info = callback.data.split(":")[1]
+		if info == "MC":
+			thumb = env_vars["TH1"]
+			cap = env_vars["F1"]
+			b1 = env_vars["B1"][0]
+			b2 = env_vars["B1"][1]
+		elif info == "MW":
+			thumb = env_vars["TH2"]
+			cap = env_vars["F2"]
+			b1 = env_vars["B2"][0]
+			b2 = env_vars["B2"][1]
+		cap = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
 		await DB().add(user_options)
 		return await callback.message.edit_text(text="Doned Thumb: {thumb}")
 		
