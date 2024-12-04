@@ -251,7 +251,8 @@ async def on_set_caption(client: Client, message: Message):
 async def on_photo(client: Client, message: Message):
 	try: photo = message.text.split(" ")
 	except Exception as e: return message.reply(f" Errors Occures: {e}\n\n Correct Format: /pto thumb.jpg")
-	if not photo.endswith(".jpg"): photo = photo + ".jpg"
+	if not photo.endswith(".jpg"): 
+		photo = photo + ".jpg"
 	return await client.send_photo(photo=photo, caption=f"<b>{photo}</b>")
 
 @bot.on_message(filters=filters.command(['refresh']))
@@ -653,19 +654,22 @@ async def on_callback_query(client, callback: CallbackQuery):
 		await options_click(client, callback)
 	elif callback.data.startswith("athumb"):
 		info = callback.data.split(":")[1]
-		if info == "MC":
-			thumb = env_vars["TH1"]
-			cap = env_vars["F1"]
-			b1 = env_vars["B1"][0]
-			b2 = env_vars["B1"][1]
-		elif info == "MW":
-			thumb = env_vars["TH2"]
-			cap = env_vars["F2"]
-			b1 = env_vars["B2"][0]
-			b2 = env_vars["B2"][1]
-		cap = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
-		await DB().add(user_options)
-		return await callback.message.edit_text(text="Doned Thumb: {thumb}")
+		try:
+			if info == "MC":
+				thumb = env_vars["TH1"]
+				cap = env_vars["F1"]
+				b1 = env_vars["B1"][0]
+				b2 = env_vars["B1"][1]
+			elif info == "MW":
+				thumb = env_vars["TH2"]
+				cap = env_vars["F2"]
+				b1 = env_vars["B2"][0]
+				b2 = env_vars["B2"][1]
+			user_options = UserInfo(user_id=str(callback.from_user.id), thumb=thumb, cap=cap, b1=b1, b2=b2)
+			await DB().add(user_options)
+			return await callback.message.edit_text(text="Doned Thumb: {thumb}")
+		except Exception as e:
+			return await callback.message.edit_text(text="Errors: <code>{e}</code>")
 		
 	else:
 		await bot.answer_callback_query(callback.id, 'This is an old button, please redo the search', show_alert=True)
